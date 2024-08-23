@@ -1,0 +1,408 @@
+openapi: 3.0.0
+
+info:
+  version: 1.0.4
+  title: 'Check Point open-appsec Agents Security Logs'
+  description: >
+    # General:
+    This file uses openAPI format to document the JSON file format of local security logs sent by open-appsec locally.
+  termsOfService: https://www.checkpoint.com/about-us/cloud-terms/
+  contact:
+    email: infinity-next-support@checkpoint.com
+
+paths:
+  /agents/events:
+    post:
+      summary: Sending event logs
+      description: This is a simple API for sending event logs. The REST API is used only when the open-appsec agent is connected to the Check Point cloud. The aim of this document is not an exact documentation of the REST API but rather the JSON format used by it.
+      tags:
+        - Messaging
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogForSingle'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '413':
+          $ref: '#/components/responses/requestTooLarge'
+        '500':
+          $ref: '#/components/responses/internalError'
+
+  /agents/events/bulk:
+    post:
+      summary: Sending a bulk of logs to fog
+      description: This is a simple API for sending event bulk logs. The REST API is used only when the open-appsec agent is connected to the Check Point cloud. The aim of this document is not an exact documentation of the REST API but rather the JSON format used by it.
+      tags:
+        - Messaging
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Logs'
+      responses:
+        '200':
+          description: Successful operation
+        '207':
+          $ref: '#/components/responses/partialSuccess'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '413':
+          $ref: '#/components/responses/requestTooLarge'
+        '500':
+          $ref: '#/components/responses/internalError'
+
+components:
+  schemas:
+    Logs:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogForBulk'
+          example: |
+            {
+              "logs": [
+                {
+                  "id": 1,
+                  "log": {
+                    "eventTime": "2019-06-30T06:21:57.192733",
+                    "eventName": "New connection accepted by Firewall",
+                    "eventSeverity": "Medium",
+                    "eventPriority": "Low",
+                    "eventType": "Event Driven",
+                    "eventLevel": "Log",
+                    "eventAudience": "Security",
+                    "eventAudienceTeam": "FW",
+                    "eventLogLevel": "info",
+                    "eventTags": [
+                      "Firewall Information"
+                    ],
+                    "eventSource": {
+                      "eventId": "9b270134-9929-4c63-b37a-5ff212649327",
+                      "eventTraceId": "2462bac2-5ecf-4f7e-a7dc-013f190596d9",
+                      "eventSpanId": "ad71930e-6aa4-4c8a-97b0-f010aeb2a7c4",
+                      "issuingEngine": "Firewall Access",
+                      "sourceProcess": "cp-kernel-attachment",
+                      "practiceId": "ac81fdf5-c4ed-4db1-a73d-062dcc373674",
+                      "practiceName": "Access Control",
+                      "zoneId": "a743a4b1-05a0-431a-beb6-8c3fad58761b",
+                      "zoneName": "My Web Servers",
+                      "triggerId": "9d5e3b4e-1caf-43ab-bc09-a9c002eeb03d",
+                      "triggerName": "Standard Log"
+                    },
+                    "eventData": {
+                      "securityAction": "Drop",
+                      "ipProtocol": "TCP",
+                      "sourceIP": "12.12.12.12",
+                      "sourcePort": 1234,
+                      "sourceCountryName": "Nepal",
+                      "destinationIp": "13.13.13.13",
+                      "destinationPort": 4321
+                    }
+                  }
+                },
+                {
+                  "id": 2,
+                  "log": {
+                    "eventTime": "2019-06-30T06:21:57.192733",
+                    "eventName": "New connection accepted by Firewall",
+                    "eventSeverity": "Medium",
+                    "eventPriority": "Low",
+                    "eventType": "Event Driven",
+                    "eventLevel": "Log",
+                    "eventAudience": "Security",
+                    "eventAudienceTeam": "FW",
+                    "eventLogLevel": "info",
+                    "eventTags": [
+                      "Firewall Information"
+                    ],
+                    "eventSource": {
+                      "eventId": "9b270134-9929-4c63-b37a-5ff212649327",
+                      "eventTraceId": "2462bac2-5ecf-4f7e-a7dc-013f190596d9",
+                      "eventSpanId": "ad71930e-6aa4-4c8a-97b0-f010aeb2a7c4",
+                      "issuingEngine": "Firewall Access",
+                      "sourceProcess": "cp-kernel-attachment",
+                      "practiceId": "ac81fdf5-c4ed-4db1-a73d-062dcc373674",
+                      "practiceName": "Access Control",
+                      "zoneId": "a743a4b1-05a0-431a-beb6-8c3fad58761b",
+                      "zoneName": "My Web Servers",
+                      "triggerId": "9d5e3b4e-1caf-43ab-bc09-a9c002eeb03d",
+                      "triggerName": "Standard Log"
+                    },
+                    "eventData": {
+                      "securityAction": "Drop",
+                      "ipProtocol": "TCP",
+                      "sourceIP": "16.16.16.16",
+                      "sourcePort": 1235,
+                      "sourceCountryName": "Nepal",
+                      "destinationIp": "13.13.13.13",
+                      "destinationPort": 4321
+                    }
+                  }
+                }
+              ]
+            }
+
+    LogForBulk:
+      type: object
+      properties:
+        id:
+          type: integer
+        log:
+          $ref: '#/components/schemas/Log'
+
+    LogForSingle:
+      type: object
+      properties:
+        log:
+          $ref: '#/components/schemas/Log'
+      example: |
+        {
+          "log": {
+            "eventTime": "2019-06-30T06:21:57.192733",
+            "eventName": "New connection accepted by Firewall",
+            "eventSeverity": "Medium",
+            "eventPriority": "Low",
+            "eventType": "Event Driven",
+            "eventLevel": "Log",
+            "eventAudience": "Security",
+            "eventAudienceTeam": "FW",
+            "eventLogLevel": "info",
+            "eventTags": [
+              "Firewall Information"
+            ],
+            "eventSource": {
+              "eventId": "9b270134-9929-4c63-b37a-5ff212649327",
+              "eventTraceId": "2462bac2-5ecf-4f7e-a7dc-013f190596d9",
+              "eventSpanId": "ad71930e-6aa4-4c8a-97b0-f010aeb2a7c4",
+              "issuingEngine": "Firewall Access",
+              "sourceProcess": "cp-kernel-attachment",
+              "practiceId": "ac81fdf5-c4ed-4db1-a73d-062dcc373674",
+              "practiceName": "Access Control",
+              "zoneId": "a743a4b1-05a0-431a-beb6-8c3fad58761b",
+              "zoneName": "My Web Servers",
+              "triggerId": "9d5e3b4e-1caf-43ab-bc09-a9c002eeb03d",
+              "triggerName": "Standard Log"
+            },
+            "eventData": {
+              "securityAction": "Drop",
+              "ipProtocol": "TCP",
+              "sourceIP": "12.12.12.12",
+              "sourcePort": 1234,
+              "sourceCountryName": "Nepal",
+              "destinationIp": "13.13.13.13",
+              "destinationPort": 4321
+            }
+          }
+        }
+
+    Log:
+      type: object
+      required:
+        - eventTime
+      properties:
+        eventTime:
+          type: string
+          description: 'Datetime when the log is generated. Format ISO 8601 - YYYY-MM-DDTHH:mm:ss.mmmmmm'
+          format: date-time
+          pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}Z?$'
+          example: '2019-06-30T06:21:57.192733'
+        eventName:
+          type: string
+          description: 'Security event name'
+          example: 'New connection accepted by Firewall'
+        eventSeverity:
+          type: string
+          enum: [Low, Medium, High, Critical]
+          description: 'Severity level of the event.'
+          example: 'Medium'
+        eventPriority:
+          type: string
+          enum: [Low, Medium, High]
+          description: 'Priority level of the event.'
+          example: 'Low'
+        eventType:
+          type: string
+          description: 'Event trigger type'
+          example: 'Event Driven'
+        eventLevel:
+          type: string
+          enum: [Log, Warning, Error, Critical]
+          description: 'Level of the event log'
+          example: 'Log'
+        eventAudience:
+          type: string
+          description: 'Event audience'
+          example: 'Security'
+        eventAudienceTeam:
+          type: string
+          description: 'Team responsible for handling the event'
+          example: 'FW'
+        eventLogLevel:
+          type: string
+          description: 'Log level of the event'
+          example: 'info'
+        eventTags:
+          type: array
+          description: 'Tags associated with the event'
+          items:
+            type: string
+            example: 'Firewall Information'
+        eventSource:
+          $ref: '#/components/schemas/EventSource'
+        eventData:
+          $ref: '#/components/schemas/EventData'
+
+    EventSource:
+      type: object
+      properties:
+        eventId:
+          type: string
+          description: 'Unique ID of the event'
+          format: uuid
+          example: '9b270134-9929-4c63-b37a-5ff212649327'
+        eventTraceId:
+          type: string
+          description: 'Trace ID of the event'
+          format: uuid
+          example: '2462bac2-5ecf-4f7e-a7dc-013f190596d9'
+        eventSpanId:
+          type: string
+          description: 'Span ID of the event'
+          format: uuid
+          example: 'ad71930e-6aa4-4c8a-97b0-f010aeb2a7c4'
+        issuingEngine:
+          type: string
+          description: 'Engine that issued the event'
+          example: 'Firewall Access'
+        sourceProcess:
+          type: string
+          description: 'Process that generated the event'
+          example: 'cp-kernel-attachment'
+        practiceId:
+          type: string
+          description: 'ID of the practice'
+          format: uuid
+          example: 'ac81fdf5-c4ed-4db1-a73d-062dcc373674'
+        practiceName:
+          type: string
+          description: 'Name of the practice'
+          example: 'Access Control'
+        zoneId:
+          type: string
+          description: 'ID of the security zone'
+          format: uuid
+          example: 'a743a4b1-05a0-431a-beb6-8c3fad58761b'
+        zoneName:
+          type: string
+          description: 'Name of the security zone'
+          example: 'My Web Servers'
+        triggerId:
+          type: string
+          description: 'ID of the trigger'
+          format: uuid
+          example: '9d5e3b4e-1caf-43ab-bc09-a9c002eeb03d'
+        triggerName:
+          type: string
+          description: 'Name of the trigger'
+          example: 'Standard Log'
+
+    EventData:
+      type: object
+      properties:
+        securityAction:
+          type: string
+          description: 'Action taken by security system'
+          example: 'Drop'
+        ipProtocol:
+          type: string
+          description: 'Network protocol used by the event'
+          example: 'TCP'
+        sourceIP:
+          type: string
+          description: 'Source IP address'
+          format: ipv4
+          example: '12.12.12.12'
+        sourcePort:
+          type: integer
+          description: 'Source port number'
+          example: 1234
+        sourceCountryName:
+          type: string
+          description: 'Country name of the source IP'
+          example: 'Nepal'
+        destinationIp:
+          type: string
+          description: 'Destination IP address'
+          format: ipv4
+          example: '13.13.13.13'
+        destinationPort:
+          type: integer
+          description: 'Destination port number'
+          example: 4321
+
+  responses:
+    unauthorizedError:
+      description: Unauthorized error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Unauthorized
+    badRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Bad Request
+    requestTooLarge:
+      description: Request Too Large
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Request Too Large
+    internalError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Internal Server Error
+    partialSuccess:
+      description: Partial Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: Some logs were processed successfully, but others failed.
